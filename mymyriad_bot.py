@@ -4,8 +4,8 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
 # --- Configuration ---
-TELEGRAM_BOT_TOKEN = '8589647742:AAErA6GaGlJw_34hn2qi97iq0PSCZwOVA3I' # Make sure your token is still here
-# The CORRECT API endpoint and parameters we discovered
+TELEGRAM_BOT_TOKEN = 'my bot API key' # Make sure your token is still here
+# The CORRECT API endpoint and parameters discovered
 MYRIAD_API_URL = 'https://api.polkamarkets.com/markets'
 API_PARAMS = {'state': 'open', 'slug': 'myriad'}
 HEADERS = {'User-Agent': 'MyMyriadBot/0.2'}
@@ -44,7 +44,7 @@ async def markets(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("Fetching the latest markets, please wait...")
 
     try:
-        # Make the API request with our confirmed working settings
+        # Make the API request with confirmed working settings
         response = requests.get(MYRIAD_API_URL, params=API_PARAMS, headers=HEADERS, timeout=15)
         response.raise_for_status()  # Raise an exception for bad status codes
 
@@ -61,12 +61,9 @@ async def markets(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             title = market.get('title', 'No Title').strip()
             outcomes = ", ".join(market.get('answers', ['Yes', 'No']))
             
-            # Using MarkdownV2 requires escaping some characters, but Markdown is simpler.
-            # Let's bold the title and italicize the outcomes.
             message += f"➡️ *{title}*\n"
             message += f"   _Options: {outcomes}_\n\n"
-        
-        # Send the formatted message
+
         await update.message.reply_text(message, parse_mode='Markdown')
 
     except requests.exceptions.RequestException as e:
